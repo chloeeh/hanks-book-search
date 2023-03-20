@@ -14,7 +14,7 @@ const LoginForm = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   // Replace the loginUser() functionality imported from the API file with the LOGIN_USER mutation functionality.
-  const[loginUser, {error}] = useMutation(LOGIN_USER);
+  const[loginUser] = useMutation(LOGIN_USER);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -25,11 +25,11 @@ const LoginForm = () => {
     event.preventDefault();
 
     // check if form has everything (as per react-bootstrap docs)
-    // const form = event.currentTarget;
-    // if (form.checkValidity() === false) {
-    //   event.preventDefault();
-    //   event.stopPropagation();
-    // }
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
     // Replace the loginUser() functionality imported from the API file with the LOGIN_USER mutation functionality.
     try {
@@ -39,8 +39,9 @@ const LoginForm = () => {
 
       Auth.login(data.login.token)
 
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
+      setShowAlert(true);
     }
 
     setUserFormData({
