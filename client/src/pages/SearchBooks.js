@@ -12,8 +12,9 @@ import Auth from '../utils/auth';
 // import these new files
 import { useMutation } from '@apollo/client';
 import { SAVE_BOOK } from '../utils/mutations'
+import { GET_ME } from '../utils/queries';
 // removed 'saveBook' since we have it in mutations
-import { searchGoogleBooks } from '../utils/API';
+// import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
 const SearchBooks = () => {
@@ -22,7 +23,7 @@ const SearchBooks = () => {
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
   // create useMutation hook to modify user data
-  const [saveBook, { error, data }] = useMutation(SAVE_BOOK);
+  const [saveBook] = useMutation(SAVE_BOOK);
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
@@ -41,7 +42,7 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await searchGoogleBooks(searchInput);
+      const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${searchInput}`);
 
       if (!response.ok) {
         throw new Error('something went wrong!');
@@ -52,8 +53,8 @@ const SearchBooks = () => {
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
-        title: book.volumeInfo.title,
         description: book.volumeInfo.description,
+        title: book.volumeInfo.title,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
 
@@ -76,22 +77,44 @@ const SearchBooks = () => {
       return false;
     }
 
-    try {
-      // const response = await saveBook(bookToSave, token);
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
+    // try {
+    //   // const response = await saveBook(bookToSave, token);
+    //   // if (!response.ok) {
+    //   //   throw new Error('something went wrong!');
+    //   // }
 
-      const {data} = await saveBook({
-        variables: { input: bookToSave }
-      });
+    //   const {data} = await saveBook({
+    //     variables: { input: bookToSave }
+    //   });
 
-      // if book successfully saves to user's account, save book id to state
-      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  //   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  //   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  //   console.log(bookToSave)
+  //   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  //   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  //   try {
+  //     const { data } = await saveBook({
+  //       variables: { input: bookToSave },
+  //     });
+
+  //     // if book successfully saves to user's account, save book id to state
+  //     setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  try {
+    await saveBook({
+      variables: {book: bookToSave},
+    });
+
+    // if book successfully saves to user's account, save book id to state
+    setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <>
@@ -99,7 +122,7 @@ const SearchBooks = () => {
         <Container>
           <h1>Search for Books!</h1>
           <Form onSubmit={handleFormSubmit}>
-            <Form>
+            {/* <Form> */}
               <Col xs={12} md={8}>
                 <Form.Control
                   name='searchInput'
@@ -115,7 +138,7 @@ const SearchBooks = () => {
                   Submit Search
                 </Button>
               </Col>
-            </Form>
+            {/* </Form> */}
           </Form>
         </Container>
       </div>
@@ -127,9 +150,10 @@ const SearchBooks = () => {
             : 'Search for a book to begin'}
         </h2>
         <Row>
-          {searchedBooks.map((book) => {
+          {searchedBooks.map((book, i) => {
+            
             return (
-              <Col md="4">
+              <Col key={i} md="4">
                 <Card key={book.bookId} border='dark'>
                   {book.image ? (
                     <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
