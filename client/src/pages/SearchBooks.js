@@ -12,6 +12,7 @@ import Auth from '../utils/auth';
 // import these new files
 import { useMutation } from '@apollo/client';
 import { SAVE_BOOK } from '../utils/mutations'
+import { GET_ME } from '../utils/queries';
 // removed 'saveBook' since we have it in mutations
 // import { searchGoogleBooks } from '../utils/API';
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
@@ -22,7 +23,7 @@ const SearchBooks = () => {
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
   // create useMutation hook to modify user data
-  const [saveBook, {error}] = useMutation(SAVE_BOOK);
+  const [saveBook] = useMutation(SAVE_BOOK);
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
@@ -52,8 +53,8 @@ const SearchBooks = () => {
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
-        title: book.volumeInfo.title,
         description: book.volumeInfo.description,
+        title: book.volumeInfo.title,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
       }));
 
@@ -86,17 +87,34 @@ const SearchBooks = () => {
     //     variables: { input: bookToSave }
     //   });
 
-    try {
-      const { data } = await saveBook({
-        variables: { input: bookToSave },
-      });
+  //   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  //   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  //   console.log(bookToSave)
+  //   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  //   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  //   try {
+  //     const { data } = await saveBook({
+  //       variables: { input: bookToSave },
+  //     });
 
-      // if book successfully saves to user's account, save book id to state
-      setSavedBookIds([...savedBookIds, bookToSave.bookId]);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  //     // if book successfully saves to user's account, save book id to state
+  //     setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  try {
+    await saveBook({
+      variables: {book: bookToSave},
+    });
+
+    // if book successfully saves to user's account, save book id to state
+    setSavedBookIds([...savedBookIds, bookToSave.bookId]);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <>
@@ -133,6 +151,7 @@ const SearchBooks = () => {
         </h2>
         <Row>
           {searchedBooks.map((book, i) => {
+            
             return (
               <Col key={i} md="4">
                 <Card key={book.bookId} border='dark'>

@@ -18,7 +18,18 @@ import { REMOVE_BOOK } from '../utils/mutations';
 const SavedBooks = () => {
   // const [userData, setUserData] = useState({});
 
-  const { loading, data} = useQuery(GET_ME);
+  const { loading, error, data} = useQuery(GET_ME);
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  console.log("LOADING :: ", loading)
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  console.log("DATA :: ", data)
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+  console.log("DATA :: ", error)
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
   const [removeBook] = useMutation(REMOVE_BOOK);
 
   const userData = data?.me || [];

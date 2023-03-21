@@ -26,19 +26,18 @@ export const ADD_USER = gql`
 
 // keep items in order as setup in typedefs.js
 export const SAVE_BOOK = gql`
-  mutation saveBook($authors: [String], $description: String!, $title: String!, $bookId: String!, $image: String, $link: String) {
-    saveBook(authors: $authors, description: $description, title: $title, bookId: $bookId, image: $image, link: $link) {
-      _id
+  mutation saveBook($book: SavedBookInput!) {
+    saveBook(book: $book) {
       username
       email
       bookCount
       savedBooks {
-        bookId
         authors
         description
-        title
+        bookId
         image
         link
+        title
       }
     }
   }
