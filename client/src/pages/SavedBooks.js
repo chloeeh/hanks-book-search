@@ -16,20 +16,8 @@ import { GET_ME } from '../utils/queries';
 import { REMOVE_BOOK } from '../utils/mutations';
 
 const SavedBooks = () => {
-  // const [userData, setUserData] = useState({});
-
   const { loading, error, data} = useQuery(GET_ME);
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-  console.log("LOADING :: ", loading)
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-  console.log("DATA :: ", data)
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-  console.log("DATA :: ", error)
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
   const [removeBook] = useMutation(REMOVE_BOOK);
 
   const userData = data?.me || [];
@@ -68,8 +56,6 @@ const SavedBooks = () => {
     return <h2>LOADING...</h2>;
   }
 
-
-
   return (
     <>
     {/* removed the fluid attribute from the below div because it was a pain in the ass */}
@@ -80,14 +66,18 @@ const SavedBooks = () => {
       </div>
       <Container>
         <h2 className='pt-5'>
+          {/* check to see if there are any userData.savedBooks AND if there is a length */}
           {userData.savedBooks && userData.savedBooks.length
             ? `Viewing ${userData.savedBooks.length} saved ${userData.savedBooks.length === 1 ? 'book' : 'books'}:`
             : 'You have no saved books!'}
         </h2>
         <Row>
+          {/* check to see if userData.savedBooks exists before you map */}
           {userData.savedBooks?.map((book, i) => {
             return (
+              // create a key with a variable
               <Col key={i} md="4">
+                {/* set key = book.bookId */}
                 <Card key={book.bookId} border='dark'>
                   {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
                   <Card.Body>

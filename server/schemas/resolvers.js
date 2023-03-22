@@ -8,6 +8,8 @@ const resolvers = {
             if (context.user) {
                 return User.findOne({ _id: context.user._id })
                 // .populate('books');
+                // removed .populate('books') because it kept throwing an error...not sure
+                // what it's supposed to do. I am tired and cranky, so it is staying OUT
             }
             console.log(context)
             throw new AuthenticationError('You need to be logged in!');
@@ -41,11 +43,6 @@ const resolvers = {
                     { $addToSet: {savedBooks: book} },
                     { new: true }
                 )
-                console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-                console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-                console.log(updatedUser)
-                console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-                console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
                 return updatedUser;
             }
             throw new AuthenticationError('You need to be logged in!')
